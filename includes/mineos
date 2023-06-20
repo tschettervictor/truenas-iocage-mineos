@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# PROVIDE: mineos
+# REQUIRE: LOGIN
+# KEYWORD: shutdown
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf to enable this service:
+#
+# mineos_enable (bool): Set to NO by default.
+#
+# Set it to YES to enable it.
+ 
+. /etc/rc.subr
+name="mineos"
+rcvar="${name}_enable"
+load_rc_config $name
+ 
+: ${mineos_enable:="NO"}
+ 
+pidfile="/var/run/mineos.pid"
+command="/usr/local/bin/node"
+ 
+start_precmd="export PATH=$PATH:/usr/local/bin"
+command_args="/usr/local/games/minecraft/service.js start"
+
+status_cmd="/usr/local/bin/node /usr/local/games/minecraft/service.js status"
+stop_cmd="/usr/local/bin/node /usr/local/games/minecraft/service.js stop"
+ 
+extra_commands="update"
+update_cmd="mineos_update"
+mineos_update()
+{
+    /usr/local/bin/git --git-dir=/usr/local/games/minecraft/.git --work-tree=/usr/local/games/minecraft stash
+    /usr/local/bin/git --git-dir=/usr/local/games/minecraft/.git --work-tree=/usr/local/games/minecraft pull
+    ${start_precmd}
+    /usr/local/bin/npm --prefix /usr/local/games/minecraft install jsegaert/node-userid --python=/usr/local/bin/python3.9
+    /usr/local/bin/npm --prefix /usr/local/games/minecraft update --python=/usr/local/bin/python3.9
+}
+ 
+run_rc_command "$1"
