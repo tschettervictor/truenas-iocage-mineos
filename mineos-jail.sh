@@ -129,6 +129,7 @@ cat <<__EOF__ >/tmp/pkg.json
   "node16",
   "python39",
   "py39-rdiff-backup",
+  "py39-supervisor",
   "rsync",
   "screen"
   ]
@@ -161,7 +162,7 @@ iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/rc.d/
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/games/
 iocage exec "${JAIL_NAME}" mkdir -p /var/games/minecraft
 
-# Create and mount includes directory for Caddyfile
+# Create and mount includes directory for Caddyfile and mount pool path
 iocage exec "${JAIL_NAME}" mkdir -p /mnt/includes
 iocage fstab -a "${JAIL_NAME}" "${INCLUDES_PATH}" /mnt/includes nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${POOL_PATH}"/mineos /var/games/minecraft nullfs rw 0 0
@@ -181,6 +182,7 @@ if ! iocage exec "${JAIL_NAME}" "cd /usr/local/games/minecraft && npm install np
 	echo "Failed to install MineOS."
  	exit 1
 fi
+
 iocage exec "${JAIL_NAME}" sed -i '' "s/^use_https.*/use_https = false/" /etc/mineos.conf
 
 # Create mineos user
@@ -246,7 +248,6 @@ else
 fi
 
 # Copy rc.d files
-iocage exec "${JAIL_NAME}" cp -f /mnt/includes/mineos /usr/local/etc/rc.d/
 iocage exec "${JAIL_NAME}" cp -f /mnt/includes/caddy /usr/local/etc/rc.d/
 
 # Edit Caddyfile
@@ -259,12 +260,16 @@ iocage exec "${JAIL_NAME}" sed -i '' "s/jail_ip/${IP}/" /usr/local/www/Caddyfile
 # Don't need /mnt/includes any more, so unmount it
 iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" /mnt/includes nullfs rw 0 0
 
+# Configure supervisord
+iocage exec "${JAIL_NAME}" "cat /usr/local/games/minecraft/init/supervisor_conf.bsd >> /usr/local/etc/supervisord.conf"
+
 # Enable and start caddy and services
 iocage exec "${JAIL_NAME}" sysrc caddy_enable="YES"
-iocage exec "${JAIL_NAME}" sysrc mineos_enable="YES"
+iocage exec "${JAIL_NAME}" sysrc supervisord_enable="YES"
 iocage exec "${JAIL_NAME}" sysrc caddy_config="/usr/local/www/Caddyfile"
 iocage exec "${JAIL_NAME}" service caddy start
-iocage exec "${JAIL_NAME}" service mineos start
+iocage exec "${JAIL_NAME}" service supervisord start
+iocage restart "${JAIL_NAME}"
 
 echo ""
 if [ $STANDALONE_CERT -eq 1 ] || [ $DNS_CERT -eq 1 ]; then
