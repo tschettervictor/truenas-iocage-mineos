@@ -69,13 +69,13 @@ This script has only been tested with Cloudflare, which works well.
 Visit the [Caddy download page](https://caddyserver.com/download) to see the DNS authentication plugins currently available.  To build Caddy with your desired plugin, use the last part of the "Package" on that page as DNS_PLUGIN in your `mineos-config` file.  E.g., if the package name is `github.com/caddy-dns/cloudflare`, you'd set `DNS_PLUGIN=cloudflare`.  From that page, there are also links to the documentation for each plugin, which will describe what credentials are needed.  If your provider needs only an API token (as is the case with Cloudflare, and apparently with DNSPod and Gandi), you'll likely be able to set `DNS_TOKEN=long_api_token` in the `mineos-config` file and not need to do anything else.  If your provider requires different credentials, you'll need to modify the Caddyfile to account for them.
 
 ### Execution
-Once you've downloaded the script and prepared the configuration file, run this script (`script mineos.log ./mineos-jail.sh`).  The script will run for maybe a minute.  When it finishes, your jail will be created, MineOS will be installed, and you will be shown the user and password to log in to the webui.
+Once you've downloaded the script and prepared the configuration file, run this script (`script mineos.log ./mineos-jail.sh`). The script will run for maybe a minute. When it finishes, your jail will be created, MineOS will be installed, and you will be shown the user and password to log in to the webui.
 
 ### Reinstalling
-This script supports reinstalling and keeping your servers intact
-It will just reinstall overtop of your existing data, and should detect them on a reinstall
+- This script supports reinstalling and keeping your servers intact.
+- It will just reinstall overtop of your existing data, and should detect them on a reinstall.
 
 ### Notes
-The mineos data files are located in `/var/games/minecraft`
-The Caddyfile is located at `/usr/local/www/Caddyfile`
-The default user and password is mineos and mineos
+- The mineos data files are located in `/var/games/minecraft`
+- The Caddyfile is located at `/usr/local/www/Caddyfile`
+- The default user and password is mineos and mineos
