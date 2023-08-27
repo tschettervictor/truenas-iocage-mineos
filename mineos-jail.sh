@@ -264,11 +264,11 @@ iocage exec "${JAIL_NAME}" sysrc caddy_enable="YES"
 iocage exec "${JAIL_NAME}" "cat /usr/local/games/minecraft/init/supervisor_conf.bsd >> /usr/local/etc/supervisord.conf"
 iocage exec "${JAIL_NAME}" sysrc supervisord_enable="YES"
 
-# Restart
-iocage restart "${JAIL_NAME}"
-
 # Don't need /mnt/includes any more, so unmount it
 iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" /mnt/includes nullfs rw 0 0
+
+# Restart
+iocage restart "${JAIL_NAME}"
 
 echo "---------------"
 echo "Installation complete."
