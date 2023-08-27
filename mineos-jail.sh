@@ -160,13 +160,10 @@ iocage set mount_linprocfs=1 "${JAIL_NAME}"
 
 # Create MineOS directory on selected pool
 mkdir -p "${POOL_PATH}"/mineos
-
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/www/
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/etc/rc.d/
 iocage exec "${JAIL_NAME}" mkdir -p /usr/local/games/
 iocage exec "${JAIL_NAME}" mkdir -p /var/games/minecraft
-
-# Create and mount includes directory for Caddyfile and mount pool path
 iocage exec "${JAIL_NAME}" mkdir -p /mnt/includes
 iocage fstab -a "${JAIL_NAME}" "${INCLUDES_PATH}" /mnt/includes nullfs rw 0 0
 iocage fstab -a "${JAIL_NAME}" "${POOL_PATH}"/mineos /var/games/minecraft nullfs rw 0 0
@@ -176,6 +173,7 @@ iocage fstab -a "${JAIL_NAME}" "${POOL_PATH}"/mineos /var/games/minecraft nullfs
 # MineOS Installation
 #
 #####
+
 iocage exec "${JAIL_NAME}" git clone https://github.com/hexparrot/mineos-node /usr/local/games/minecraft
 iocage exec "${JAIL_NAME}" "chmod +x /usr/local/games/minecraft/*.sh"
 iocage exec "${JAIL_NAME}" "chmod +x /usr/local/games/minecraft/*.js"
@@ -186,7 +184,6 @@ if ! iocage exec "${JAIL_NAME}" "cd /usr/local/games/minecraft && npm install np
 	echo "Failed to install MineOS."
  	exit 1
 fi
-
 iocage exec "${JAIL_NAME}" sed -i '' "s/^use_https.*/use_https = false/" /etc/mineos.conf
 
 # Create mineos user
@@ -196,7 +193,7 @@ EOF"
 
 ##### 
 #
-# Additional Dependency installation
+# Caddy Installation
 #
 #####
 
@@ -232,8 +229,6 @@ if [ $SELFSIGNED_CERT -eq 1 ]; then
 	iocage exec "${JAIL_NAME}" cp /mnt/includes/privkey.pem /usr/local/etc/pki/tls/private/privkey.pem
 	iocage exec "${JAIL_NAME}" cp /mnt/includes/fullchain.pem /usr/local/etc/pki/tls/certs/fullchain.pem
 fi
-
-# Copy Caddyfile
 if [ $STANDALONE_CERT -eq 1 ] || [ $DNS_CERT -eq 1 ]; then
   iocage exec "${JAIL_NAME}" cp -f /mnt/includes/remove-staging.sh /root/
 fi
@@ -250,31 +245,34 @@ else
 	echo "Copying Caddyfile for Let's Encrypt cert"
 	iocage exec "${JAIL_NAME}" cp -f /mnt/includes/Caddyfile-standalone /usr/local/www/Caddyfile	
 fi
-
-# Copy rc.d files
 iocage exec "${JAIL_NAME}" cp -f /mnt/includes/caddy /usr/local/etc/rc.d/
-
-# Edit Caddyfile
 iocage exec "${JAIL_NAME}" sed -i '' "s/yourhostnamehere/${HOST_NAME}/" /usr/local/www/Caddyfile
 iocage exec "${JAIL_NAME}" sed -i '' "s/dns_plugin/${DNS_PLUGIN}/" /usr/local/www/Caddyfile
 iocage exec "${JAIL_NAME}" sed -i '' "s/api_token/${DNS_TOKEN}/" /usr/local/www/Caddyfile
 iocage exec "${JAIL_NAME}" sed -i '' "s/youremailhere/${CERT_EMAIL}/" /usr/local/www/Caddyfile
 iocage exec "${JAIL_NAME}" sed -i '' "s/jail_ip/${IP}/" /usr/local/www/Caddyfile
+iocage exec "${JAIL_NAME}" sysrc caddy_config="/usr/local/www/Caddyfile"
+iocage exec "${JAIL_NAME}" sysrc caddy_enable="YES"
+
+#####
+#
+# Additional Service Installation
+#
+#####
+
+# Configure supervisord
+iocage exec "${JAIL_NAME}" "cat /usr/local/games/minecraft/init/supervisor_conf.bsd >> /usr/local/etc/supervisord.conf"
+iocage exec "${JAIL_NAME}" sysrc supervisord_enable="YES"
+
+# Restart
+iocage restart "${JAIL_NAME}"
 
 # Don't need /mnt/includes any more, so unmount it
 iocage fstab -r "${JAIL_NAME}" "${INCLUDES_PATH}" /mnt/includes nullfs rw 0 0
 
-# Configure supervisord
-iocage exec "${JAIL_NAME}" "cat /usr/local/games/minecraft/init/supervisor_conf.bsd >> /usr/local/etc/supervisord.conf"
-
-# Enable and start caddy and services
-iocage exec "${JAIL_NAME}" sysrc caddy_enable="YES"
-iocage exec "${JAIL_NAME}" sysrc supervisord_enable="YES"
-iocage exec "${JAIL_NAME}" sysrc caddy_config="/usr/local/www/Caddyfile"
-iocage exec "${JAIL_NAME}" service caddy start
-iocage exec "${JAIL_NAME}" service supervisord start
-iocage restart "${JAIL_NAME}"
-
+echo "---------------"
+echo "Installation complete."
+echo "---------------"
 echo ""
 if [ $STANDALONE_CERT -eq 1 ] || [ $DNS_CERT -eq 1 ]; then
   echo "You have obtained your Let's Encrypt certificate using the staging server."
@@ -293,13 +291,14 @@ elif [ $SELFSIGNED_CERT -eq 1 ]; then
   echo "/usr/local/etc/pki/tls/certs/fullchain.pem"
   echo ""
 fi
-
-echo "Installation complete."
-echo "Login using the user mineos and password mineos."
-echo "To change the password, use \"passwd mineos\" command from the jail."
-
+echo "---------------"
 if [ $NO_CERT -eq 1 ]; then
   echo "Using your web browser, go to http://${HOST_NAME} to log in"
 else
   echo "Using your web browser, go to https://${HOST_NAME} to log in"
 fi
+echo "---------------"
+echo "User Information
+echo "Default user = mineos"
+echo "Default password = mineos"
+echo "To change the password, use \"passwd mineos\" command from the jail."
