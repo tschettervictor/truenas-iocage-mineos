@@ -298,7 +298,7 @@ else
   echo "Using your web browser, go to https://${HOST_NAME} to log in"
 fi
 echo "---------------"
-echo "User Information
+echo "User Information"
 echo "Default user = mineos"
 echo "Default password = mineos"
 echo "To change the password, use \"passwd mineos\" command from the jail."
