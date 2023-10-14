@@ -23,7 +23,7 @@ If you aren't able or willing to obtain a certificate from Let's Encrypt, this s
 ### Prerequisites
 You will need to create
 - 1 Dataset named `mineos` in your pool.
-e.g. `/mnt/mypool/mineos`
+e.g. `/mnt/mypool/apps/mineos`
 
 If this is not present, a directory `/mineos` will be created in `$POOL_PATH`. You will want to create the dataset, otherwise a directory will just be created. Datasets make it easy to do snapshots etc...
 
@@ -33,7 +33,7 @@ Download the repository to a convenient directory on your TrueNAS system by chan
 JAIL_IP="192.168.1.199"
 DEFAULT_GW_IP="192.168.1.1"
 HOST_NAME="YOUR_FQDN"
-POOL_PATH="/mnt/tank/apps"
+POOL_PATH="/mnt/mypools/apps"
 NO_CERT=1
 ```
 Many of the options are self-explanatory, and all should be adjusted to suit your needs, but only a few are mandatory.  The mandatory options are:
