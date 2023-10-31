@@ -179,7 +179,7 @@ iocage exec "${JAIL_NAME}" "chmod +x /usr/local/games/minecraft/*.sh"
 iocage exec "${JAIL_NAME}" "chmod +x /usr/local/games/minecraft/*.js"
 iocage exec "${JAIL_NAME}" "/usr/local/games/minecraft/generate-sslcert.sh"
 iocage exec "${JAIL_NAME}" cp /usr/local/games/minecraft/mineos.conf /etc/mineos.conf
-if ! iocage exec "${JAIL_NAME}" "cd /usr/local/games/minecraft && npm install npm@9.0.0 -g && npm install jsegaert/node-userid && npm install -g"
+if ! iocage exec "${JAIL_NAME}" "cd /usr/local/games/minecraft && npm install jsegaert/node-userid && npm install -g"
 	then
 	echo "Failed to install MineOS."
  	exit 1
