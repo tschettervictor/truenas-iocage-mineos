@@ -178,13 +178,13 @@ iocage exec "${JAIL_NAME}" git clone https://github.com/hexparrot/mineos-node /u
 iocage exec "${JAIL_NAME}" "chmod +x /usr/local/games/minecraft/*.sh"
 iocage exec "${JAIL_NAME}" "chmod +x /usr/local/games/minecraft/*.js"
 iocage exec "${JAIL_NAME}" "/usr/local/games/minecraft/generate-sslcert.sh"
-iocage exec "${JAIL_NAME}" cp /usr/local/games/minecraft/mineos.conf /etc/mineos.conf
+iocage exec "${JAIL_NAME}" cp /usr/local/games/minecraft/mineos.conf /etc/supervisor/conf.d/mineos.conf
 if ! iocage exec "${JAIL_NAME}" "cd /usr/local/games/minecraft && npm install jsegaert/node-userid && npm install -g"
 	then
 	echo "Failed to install MineOS."
  	exit 1
 fi
-iocage exec "${JAIL_NAME}" sed -i '' "s/^use_https.*/use_https = false/" /etc/mineos.conf
+iocage exec "${JAIL_NAME}" sed -i '' "s/^use_https.*/use_https = false/" /etc/supervisor/conf.d/mineos.conf
 
 # Create mineos user
 iocage exec "${JAIL_NAME}" "pw useradd -n mineos -u 8443 -G games -d /nonexistent -s /usr/local/bin/bash -h 0 <<EOF
