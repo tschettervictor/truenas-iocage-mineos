@@ -1,5 +1,5 @@
 #!/bin/sh
-# Build an iocage jail under TrueNAS 13.0
+# Build an iocage jail under TrueNAS 13.0 and install MineOS
 # git clone https://github.com/tschettervictor/truenas-iocage-mineos
 
 # Check for root privileges
