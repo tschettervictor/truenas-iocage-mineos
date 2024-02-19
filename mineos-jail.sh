@@ -86,7 +86,7 @@ fi
 cat <<__EOF__ >/tmp/pkg.json
 {
   "pkgs": [
-  "git",
+  "git-lite",
   "gmake",
   "openjdk17-jre",
   "npm-node16",
