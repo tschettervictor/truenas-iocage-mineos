@@ -18,7 +18,7 @@ Download the repository to a convenient directory on your TrueNAS system by chan
 ```
 JAIL_IP="192.168.1.199"
 DEFAULT_GW_IP="192.168.1.1"
-POOL_PATH="/mnt/mypools/apps"
+POOL_PATH="/mnt/mypool/apps"
 ```
 Many of the options are self-explanatory, and all should be adjusted to suit your needs, but only a few are mandatory.  The mandatory options are:
 
