@@ -141,8 +141,6 @@ if ! iocage exec "${JAIL_NAME}" "cd /usr/local/games/minecraft && npm install js
  	exit 1
 fi
 iocage exec "${JAIL_NAME}" sed -i '' "s/^use_https.*/use_https = false/" /etc/mineos.conf
-
-# Create mineos user
 iocage exec "${JAIL_NAME}" "pw useradd -n mineos -u 8443 -G games -d /nonexistent -s /usr/local/bin/bash -h 0 <<EOF
 mineos
 EOF"
