@@ -88,9 +88,10 @@ cat <<__EOF__ >/tmp/pkg.json
   "pkgs": [
   "git-lite",
   "gmake",
-  "openjdk17-jre",
-  "npm-node16",
-  "node16",
+  "openjdk22",
+  "npm-node21",
+  "node21",
+  "yarn-node21",
   "python39",
   "py39-rdiff-backup",
   "py39-supervisor",
@@ -135,7 +136,7 @@ iocage exec "${JAIL_NAME}" "chmod +x /usr/local/games/minecraft/*.sh"
 iocage exec "${JAIL_NAME}" "chmod +x /usr/local/games/minecraft/*.js"
 iocage exec "${JAIL_NAME}" "/usr/local/games/minecraft/generate-sslcert.sh"
 iocage exec "${JAIL_NAME}" cp /usr/local/games/minecraft/mineos.conf /etc/mineos.conf
-if ! iocage exec "${JAIL_NAME}" "cd /usr/local/games/minecraft && npm install jsegaert/node-userid && npm install -g"
+if ! iocage exec "${JAIL_NAME}" "cd /usr/local/games/minecraft && yarn add jsegaert/node-userid && npm install jsegaert/node-userid && npm install -g"
 	then
 	echo "Failed to install MineOS."
  	exit 1
