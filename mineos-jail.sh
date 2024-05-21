@@ -88,7 +88,7 @@ cat <<__EOF__ >/tmp/pkg.json
   "pkgs": [
   "git-lite",
   "gmake",
-  "openjdk17-jre",
+  "openjdk22",
   "npm-node20",
   "node20",
   "yarn-node20",
