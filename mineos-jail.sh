@@ -35,9 +35,9 @@ fi
 
 JAILS_MOUNT=$(zfs get -H -o value mountpoint $(iocage get -p)/iocage)
 RELEASE=$(freebsd-version | cut -d - -f -1)"-RELEASE"
-# If release is 13.1-RELEASE, change to 13.2-RELEASE
+# If release is 13.1-RELEASE, change to 13.3-RELEASE
 if [ "${RELEASE}" = "13.1-RELEASE" ]; then
-  RELEASE="13.2-RELEASE"
+  RELEASE="13.3-RELEASE"
 fi 
 
 #####
