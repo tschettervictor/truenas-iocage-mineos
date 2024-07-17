@@ -92,9 +92,9 @@ cat <<__EOF__ >/tmp/pkg.json
   "npm-node20",
   "node20",
   "yarn-node20",
-  "python39",
-  "py39-rdiff-backup",
-  "py39-supervisor",
+  "python311",
+  "py311-rdiff-backup",
+  "py311-supervisor",
   "rsync",
   "screen"
   ]
